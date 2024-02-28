@@ -16,17 +16,23 @@ class MainWindow():
                                relief=RIDGE)
         self.mainlabel.grid(row=0, column=1)
 
+        self.mainlistbox = Listbox(self.mainframe,
+                                   font=20)
+        self.mainlistbox.grid(row=1, column=1)
+
         self.get_info_button = Button(self.mainframe,
                                       font=20,
                                       text="Input Info",
                                       relief=RIDGE,
-                                      command=self.get_info)
+                                      command=lambda: self.get_info(self.mainlistbox))
         self.get_info_button.grid(row=0, column=0)
 
-    def get_info(self):
+    def get_info(self, mainlistbox):
         self.entry_window = Toplevel()
         self.entry_window.title("Input Window")
-        self.entry_window.geometry("420x400")
+        self.entry_window.geometry("620x400")
+
+        self.mainlistbox = mainlistbox
 
         self.ask_name = Label(self.entry_window,
                               font=20,
@@ -89,6 +95,31 @@ class MainWindow():
 
         self.get_free_day = Entry(self.entry_window)
         self.get_free_day.grid(row=5, column=2)
+
+        self.submit_info_button = Button(self.entry_window,
+                                         font=20,
+                                         text="Submit Info",
+                                         relief=RIDGE,
+                                         command=lambda: self.retrieve_info(self.mainlistbox)
+                                         )
+        self.submit_info_button.grid(row=6, column=1)
+
+    def retrieve_info(self, mainlistbox):
+        self.mainlistbox = mainlistbox
+        self.name = self.get_name.get()
+        self.year = self.get_year.get()
+        self.abteilung = self.get_abteilung.get()
+        self.week_start = self.get_week_start.get()
+        self.week_end = self.get_week_end.get()
+        self.free_day = self.get_free_day.get()
+
+        self.Info = [self.name, self.year, self.abteilung, self.week_start, self.week_end, self.free_day]
+        print(self.Info)
+
+        info_string = ', '.join(map(str, self.Info))
+        mainlistbox.insert(END, info_string)
+
+
 
 
 if __name__ == "__main__":
