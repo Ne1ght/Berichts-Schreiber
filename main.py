@@ -1,4 +1,5 @@
 from tkinter import *
+import shutil
 #from docx import *
 
 class MainWindow():
@@ -26,6 +27,14 @@ class MainWindow():
                                       relief=RIDGE,
                                       command=lambda: self.get_info(self.mainlistbox))
         self.get_info_button.grid(row=0, column=0)
+
+        self.create_reports = Button(self.mainframe,
+                                     font=20,
+                                     text="Create Reports",
+                                     relief=RIDGE,
+                                     command=self.created_reports
+                                     )
+        self.create_reports.grid(row=2, column=1)
 
     def get_info(self, mainlistbox):
         self.entry_window = Toplevel()
@@ -118,7 +127,34 @@ class MainWindow():
 
         info_string = ', '.join(map(str, self.Info))
         mainlistbox.insert(END, info_string)
-        #need to change
+
+    def created_reports(self):
+        # Retrieve the contents of the listbox
+        selected_items = self.mainlistbox.get(0, END)
+
+        # Iterate over the selected items
+        for item in selected_items:
+            # Split the item by commas to separate elements
+            elements = item.split(', ')
+
+            # Access elements of each item
+            name = elements[0]
+            year = elements[1]
+            abteilung = elements[2]
+            week_start = elements[3]
+            week_end = elements[4]
+            free_day = elements[5]
+
+            shutil.copy("C:\\Users\\Maxim\\PycharmProjects\\pythonProject1\\ausbildungsnachweise-taeglich-data.docx", f"ausbildungsnachweis{week_start} - {week_end}.docx")
+
+            # Do something with the elements
+            print("Name:", name)
+            print("Year:", year)
+            print("Abteilung:", abteilung)
+            print("Week start:", week_start)
+            print("Week end:", week_end)
+            print("Free day:", free_day)
+
 
 
 
