@@ -1,6 +1,7 @@
 from tkinter import *
+from tkinter import messagebox
 import shutil
-#from docx import *
+from docx import *
 
 class MainWindow():
     def __init__(self, root_window):
@@ -37,6 +38,9 @@ class MainWindow():
         self.create_reports.grid(row=2, column=1)
 
     def get_info(self, mainlistbox):
+        self.var1 = IntVar()
+        self.var2 = IntVar()
+
         self.entry_window = Toplevel()
         self.entry_window.title("Input Window")
         self.entry_window.geometry("620x400")
@@ -105,13 +109,37 @@ class MainWindow():
         self.get_free_day = Entry(self.entry_window)
         self.get_free_day.grid(row=5, column=2)
 
+        self.ask_week_type = Label(self.entry_window,
+                                   font=20,
+                                   text="Week Type",
+                                   relief=RIDGE
+                                   )
+        self.ask_week_type.grid(row=6, column=0)
+
+        self.get_week_type1 = Checkbutton(self.entry_window,
+                                          font=20,
+                                          text="School Week",
+                                          variable=self.var1,
+                                          onvalue=1,
+                                          offvalue=0
+                                         )
+        self.get_week_type1.grid(row=6, column=1)
+
+        self.get_week_type2 = Checkbutton(self.entry_window,
+                                          font=20,
+                                          text="Work Week",
+                                          variable=self.var2,
+                                          onvalue=1,
+                                          offvalue=0)
+        self.get_week_type2.grid(row=6, column=2)
+
         self.submit_info_button = Button(self.entry_window,
                                          font=20,
                                          text="Submit Info",
                                          relief=RIDGE,
                                          command=lambda: self.retrieve_info(self.mainlistbox)
                                          )
-        self.submit_info_button.grid(row=6, column=1)
+        self.submit_info_button.grid(row=7, column=1)
 
     def retrieve_info(self, mainlistbox):
         self.mainlistbox = mainlistbox
@@ -121,8 +149,18 @@ class MainWindow():
         self.week_start = self.get_week_start.get()
         self.week_end = self.get_week_end.get()
         self.free_day = self.get_free_day.get()
+        self.week_type = None
 
-        self.Info = [self.name, self.year, self.abteilung, self.week_start, self.week_end, self.free_day]
+        if self.var1.get() == 1 and self.var2.get() == 0:
+            self.week_type = "school week"
+        elif self.var1.get() == 0 and self.var2.get() == 1:
+            self.week_type = "work week"
+        elif self.var1.get() == 1 and self.var2.get() == 1:
+            messagebox.showerror("Invalid Input", "Can't have a School and Work Week!")
+        else:
+            messagebox.showerror("Invalid Input", "Need to select at least one week type!")
+
+        self.Info = [self.name, self.year, self.abteilung, self.week_start, self.week_end, self.free_day, self.week_type]
         print(self.Info)
 
         info_string = ', '.join(map(str, self.Info))
@@ -144,8 +182,25 @@ class MainWindow():
             week_start = elements[3]
             week_end = elements[4]
             free_day = elements[5]
+            week_type = elements[6]
 
-            shutil.copy("C:\\Users\\Maxim\\PycharmProjects\\pythonProject1\\ausbildungsnachweise-taeglich-data.docx", f"ausbildungsnachweis{week_start} - {week_end}.docx")
+            which_doc_is_used = None
+
+            if week_type == "school week":
+                which_doc_is_used = shutil.copy("C:\\Users\\Maxim\\PycharmProjects\\pythonProject1\\ausbildungsnachweise-School-week.docx", f"ausbildungsnachweis{week_start} - {week_end}.docx")
+            elif week_type == "work week":
+                which_doc_is_used = shutil.copy("C:\\Users\\Maxim\\PycharmProjects\\pythonProject1\\ausbildungsnachweise-Work-week.docx", f"ausbildungsnachweis{week_start} - {week_end}.docx")
+
+            if which_doc_is_used is not None:
+                print(which_doc_is_used)
+
+            doc = Document(which_doc_is_used)
+
+            self.fill_doc_header(doc, "Name der/des Auszubildenden", name)
+            self.fill_doc_header(doc, "Ausbildungsjahr:", year)
+            self.fill_doc_header(doc, "Abteilung:", abteilung)
+            self.fill_doc_header(doc, "Ausbildungswoche vom:", week_start)
+            self.fill_doc_header(doc, "Bis:", week_end)
 
             # Do something with the elements
             print("Name:", name)
@@ -154,8 +209,22 @@ class MainWindow():
             print("Week start:", week_start)
             print("Week end:", week_end)
             print("Free day:", free_day)
+            print("Week Type:", week_type)
+
+            doc.save(which_doc_is_used)
+
+    def fill_doc_header(self, document, text_to_find, text_to_insert):
+        for table in document.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    # Check if the cell contains the text_to_find
+                    if text_to_find in cell.text:
+                        print(cell.text)
+                        # Replace the text_to_find with text_to_insert
+                        cell.text = cell.text.replace(text_to_find, text_to_insert)
 
 
+    
 
 
 
