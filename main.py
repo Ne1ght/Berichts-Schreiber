@@ -197,10 +197,10 @@ class MainWindow():
             doc = Document(which_doc_is_used)
 
             self.fill_doc_header(doc, "Name der/des Auszubildenden", name)
-            self.fill_doc_header(doc, "Ausbildungsjahr:", year)
-            self.fill_doc_header(doc, "Abteilung:", abteilung)
-            self.fill_doc_header(doc, "Ausbildungswoche vom:", week_start)
-            self.fill_doc_header(doc, "Bis:", week_end)
+            #self.fill_doc_header(doc, "Ausbildungsjahr:", year)
+            #self.fill_doc_header(doc, "Abteilung:", abteilung)
+            #self.fill_doc_header(doc, "Ausbildungswoche vom:", week_start)
+            #self.fill_doc_header(doc, "Bis:", week_end)
 
             # Do something with the elements
             #print("Name:", name)
@@ -218,38 +218,57 @@ class MainWindow():
             for row in table.rows:
                 for index, cell in enumerate(row.cells):
                     # Check if the cell contains the text_to_find
+                    print(index)
+
                     if text_to_find in cell.text:
                         #print(cell.text)
                         current_index = index
                         #print(current_index)
 
-                        # Handle merged cells
-                        merge_range = self.get_merge_range(cell)
-                        if merge_range:
-                            # Skip merged cells
-                            continue
+                        next_index = current_index + 6
+
+                        adjacent_index = row.cells[next_index]
+                        adjacent_index.text = text_to_insert
+                        print("Multipal")
+                        break
+
+                    """
+                    elif text_to_find in cell.text:
+                        current_index = index
 
                         next_index = current_index + 1
-                        if next_index < len(row.cells):
-                            adjacent_index = row.cells[next_index]
-                            adjacent_index.text = text_to_insert
+                        adjacent_index = row.cells[next_index]
+                        adjacent_index.text = text_to_insert
+                        break
 
-    def get_merge_range(self, cell):
-        """
-        Get the range of merged cells for the given cell.
-        """
-        start_index = cell._element.get('gridSpan')  # Start index of merged range
-        if start_index is None:
-            return None
-        start_index = int(start_index)
-        end_index = start_index  # End index of merged range (assuming no merged cells in row)
+                    elif text_to_find in cell.text:
+                        current_index = index
 
-        # Count the number of merged cells in the row
-        for element in cell._element.getparent().iterchildren():
-            if element.tag.endswith('gridSpan'):
-                end_index += int(element.get('val')) - 1
+                        next_index = current_index + 1
+                        adjacent_index = row.cells[next_index]
+                        adjacent_index.text = text_to_insert
+                        break
 
-        return (start_index, end_index)
+                    elif text_to_find in cell.text:
+                        current_index = index
+
+                        next_index = current_index + 1
+                        adjacent_index = row.cells[next_index]
+                        adjacent_index.text = text_to_insert
+                        break
+
+                    elif text_to_find in cell.text:
+                        current_index = index
+
+                        next_index = current_index + 1
+                        adjacent_index = row.cells[next_index]
+                        adjacent_index.text = text_to_insert
+                        break
+                    """
+        
+
+
+
 
 
 if __name__ == "__main__":
