@@ -196,11 +196,7 @@ class MainWindow():
 
             doc = Document(which_doc_is_used)
 
-            self.fill_doc_header(doc, "Name der/des Auszubildenden", name)
-            #self.fill_doc_header(doc, "Ausbildungsjahr:", year)
-            #self.fill_doc_header(doc, "Abteilung:", abteilung)
-            #self.fill_doc_header(doc, "Ausbildungswoche vom:", week_start)
-            #self.fill_doc_header(doc, "Bis:", week_end)
+            #self.fill_doc_header(doc, "Name der/des Auszubildenden", name)
 
             # Do something with the elements
             #print("Name:", name)
@@ -211,65 +207,95 @@ class MainWindow():
             #print("Free day:", free_day)
             #print("Week Type:", week_type)
 
+            for table in doc.tables:
+                for row in table.rows:
+                    for index, cell in enumerate(row.cells):
+                        cell_text = cell.text.strip()  # Remove leading and trailing whitespace
+
+                        # Debug print statements
+                        #print("Cell Text:", cell_text)
+                        #print("Length:", len(cell_text))
+
+                        if "Name der/des Auszubildenden:" in cell.text:
+                            current_index = index
+                            next_index = current_index + 6
+
+                            adjacent_index = row.cells[next_index]
+                            adjacent_index.text = name
+                            break
+
+                        if "Ausbildungsjahr:" in cell.text:
+                            current_index = index
+                            next_index = current_index + 3
+
+                            adjacent_index = row.cells[next_index]
+                            adjacent_index.text = year
+
+
+                        if "Abteilung:" in cell.text:
+                            current_index = index
+                            next_index = current_index + 2
+
+                            adjacent_index = row.cells[next_index]
+                            adjacent_index.text = abteilung
+                            break
+
+                        if "Ausbildungswoche vom:" in cell.text:
+                            current_index = index
+                            next_index = current_index + 3
+
+                            adjacent_index = row.cells[next_index]
+                            adjacent_index.text = week_start
+
+
+                        if "Bis:" in cell.text:
+                            current_index = index
+                            next_index = current_index + 2
+
+                            adjacent_index = row.cells[next_index]
+                            adjacent_index.text = week_end
+                            break
+
+                        if "Montag" in cell.text:
+                            if free_day == "Montag":
+                                pass
+                            else:
+                                if week_type == "Work Week":
+                                    print("arbeit")
+                                elif week_type == "School Week":
+                                    print("Schule")
+
+                        if "Dienstag" in cell.text:
+                            if free_day == "Dienstag":
+                                pass
+                            else:
+                                print("mach function weiter")
+
+                        if "Mittwoch" in cell.text:
+                            if free_day == "Mittwoch":
+                                pass
+                            else:
+                                print("mach weiter")
+
+                        if "Donnerstag" in cell.text:
+                            if free_day == "Donnerstag":
+                                pass
+                            else:
+                                print("mach weiter aldda")
+
+                        if "Freitag" in cell.text:
+                            if free_day == "Freitag":
+                                pass
+                            else:
+                                print("Mach weiter")
+
+                        if "Samstag" in cell.text:
+                            if free_day == "Samstag":
+                                pass
+                            else:
+                                print("Mach weiter")
+
             doc.save(which_doc_is_used)
-
-    def fill_doc_header(self, document, text_to_find, text_to_insert):
-        for table in document.tables:
-            for row in table.rows:
-                for index, cell in enumerate(row.cells):
-                    # Check if the cell contains the text_to_find
-                    print(index)
-
-                    if text_to_find in cell.text:
-                        #print(cell.text)
-                        current_index = index
-                        #print(current_index)
-
-                        next_index = current_index + 6
-
-                        adjacent_index = row.cells[next_index]
-                        adjacent_index.text = text_to_insert
-                        print("Multipal")
-                        break
-
-                    """
-                    elif text_to_find in cell.text:
-                        current_index = index
-
-                        next_index = current_index + 1
-                        adjacent_index = row.cells[next_index]
-                        adjacent_index.text = text_to_insert
-                        break
-
-                    elif text_to_find in cell.text:
-                        current_index = index
-
-                        next_index = current_index + 1
-                        adjacent_index = row.cells[next_index]
-                        adjacent_index.text = text_to_insert
-                        break
-
-                    elif text_to_find in cell.text:
-                        current_index = index
-
-                        next_index = current_index + 1
-                        adjacent_index = row.cells[next_index]
-                        adjacent_index.text = text_to_insert
-                        break
-
-                    elif text_to_find in cell.text:
-                        current_index = index
-
-                        next_index = current_index + 1
-                        adjacent_index = row.cells[next_index]
-                        adjacent_index.text = text_to_insert
-                        break
-                    """
-        
-
-
-
-
 
 if __name__ == "__main__":
     root_window = Tk()
