@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 import shutil
+import random
 from docx import *
 
 class MainWindow():
@@ -184,6 +185,8 @@ class MainWindow():
             free_day = elements[5]
             week_type = elements[6]
 
+
+
             which_doc_is_used = None
 
             if week_type == "school week":
@@ -208,8 +211,8 @@ class MainWindow():
             #print("Week Type:", week_type)
 
             for table in doc.tables:
-                for row in table.rows:
-                    for index, cell in enumerate(row.cells):
+                for row_index, row in enumerate(table.rows):
+                    for cell_index, cell in enumerate(row.cells):
                         cell_text = cell.text.strip()  # Remove leading and trailing whitespace
 
                         # Debug print statements
@@ -217,7 +220,7 @@ class MainWindow():
                         #print("Length:", len(cell_text))
 
                         if "Name der/des Auszubildenden:" in cell.text:
-                            current_index = index
+                            current_index = cell_index
                             next_index = current_index + 6
 
                             adjacent_index = row.cells[next_index]
@@ -225,7 +228,7 @@ class MainWindow():
                             break
 
                         if "Ausbildungsjahr:" in cell.text:
-                            current_index = index
+                            current_index = cell_index
                             next_index = current_index + 3
 
                             adjacent_index = row.cells[next_index]
@@ -233,7 +236,7 @@ class MainWindow():
 
 
                         if "Abteilung:" in cell.text:
-                            current_index = index
+                            current_index = cell_index
                             next_index = current_index + 2
 
                             adjacent_index = row.cells[next_index]
@@ -241,7 +244,7 @@ class MainWindow():
                             break
 
                         if "Ausbildungswoche vom:" in cell.text:
-                            current_index = index
+                            current_index = cell_index
                             next_index = current_index + 3
 
                             adjacent_index = row.cells[next_index]
@@ -249,7 +252,7 @@ class MainWindow():
 
 
                         if "Bis:" in cell.text:
-                            current_index = index
+                            current_index = cell_index
                             next_index = current_index + 2
 
                             adjacent_index = row.cells[next_index]
@@ -260,42 +263,99 @@ class MainWindow():
                             if free_day == "Montag":
                                 pass
                             else:
-                                if week_type == "Work Week":
-                                    print("arbeit")
-                                elif week_type == "School Week":
-                                    print("Schule")
+                                if week_type == "work week":
+                                    self.fill_work_report(cell_index, row_index, cell, row, table)
+                                elif week_type == "school week":
+                                    current_cell_index = cell_index
+                                    activitie_index = current_cell_index + 1
+                                    time_index = current_cell_index + 2
+
+                                    current_row_index = row_index
+                                    second_row_index = current_row_index + 1
+                                    thrid_row_index = current_row_index + 2
+
+                                    activitie_cell = row.cells[activitie_index]
+                                    activitie_cell.text = "LF10"
+                                    time_cell = row.cells[time_index]
+                                    time_cell.text = "8:00-9:30"
+
+                                    second_row = table.rows[second_row_index]
+                                    activitie_cell = second_row.cells[activitie_index]
+                                    activitie_cell.text = "LF11"
+                                    time_cell = second_row.cells[time_index]
+                                    time_cell.text = "9:50-11:20"
+
+                                    thrid_row = table.rows[thrid_row_index]
+                                    activitie_cell = thrid_row.cells[activitie_index]
+                                    activitie_cell.text = "Politik, LF14"
+                                    time_cell = thrid_row.cells[time_index]
+                                    time_cell.text = "11:50-15:00"
 
                         if "Dienstag" in cell.text:
                             if free_day == "Dienstag":
                                 pass
                             else:
-                                print("mach function weiter")
+                                self.fill_work_report(cell_index, row_index, cell, row, table)
 
                         if "Mittwoch" in cell.text:
                             if free_day == "Mittwoch":
                                 pass
                             else:
-                                print("mach weiter")
+                                self.fill_work_report(cell_index, row_index, cell, row, table)
 
                         if "Donnerstag" in cell.text:
                             if free_day == "Donnerstag":
                                 pass
                             else:
-                                print("mach weiter aldda")
+                                self.fill_work_report(cell_index, row_index, cell, row, table)
 
                         if "Freitag" in cell.text:
                             if free_day == "Freitag":
                                 pass
                             else:
-                                print("Mach weiter")
+                                self.fill_work_report(cell_index, row_index, cell, row, table)
 
                         if "Samstag" in cell.text:
                             if free_day == "Samstag":
                                 pass
                             else:
-                                print("Mach weiter")
+                                self.fill_work_report(cell_index, row_index, cell, row, table)
 
             doc.save(which_doc_is_used)
+
+    def created_random_activites_with_weights(self, activites, weight):
+        num_activites = random.choices(range(1, len(activites) + 1), weight)[0]
+        random_activites = random.sample(activites, k=num_activites)
+        random_activities_with_commas = ", ".join(random_activites)
+        return random_activities_with_commas
+
+    def fill_work_report(self, cell_index, row_index, cell, row, table):
+        activities = ["Kunden Beraten", "Ware verräumt", "Fahrräder Sortiert"]
+        weights = [5, 3, 2]
+
+        random_activites = self.created_random_activites_with_weights(activities, weights)
+        print(random_activites)
+
+        current_cell_index = cell_index
+        activitie_index = current_cell_index + 1
+        time_index = current_cell_index + 2
+
+        current_row_index = row_index
+        second_row_index = current_row_index + 1
+        thrid_row_index = current_row_index + 2
+
+        activitie_cell = row.cells[activitie_index]
+        activitie_cell.text = random_activites
+        time_cell = row.cells[time_index]
+        time_cell.text = "9:50-15:00"
+
+        second_row = table.rows[second_row_index]
+        activitie_cell = second_row.cells[activitie_index]
+        activitie_cell.text = random_activites
+        time_cell = second_row.cells[time_index]
+        time_cell.text = "15:30-19:00"
+
+
 
 if __name__ == "__main__":
     root_window = Tk()
