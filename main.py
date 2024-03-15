@@ -324,14 +324,15 @@ class MainWindow():
             doc.save(which_doc_is_used)
 
     def created_random_activites_with_weights(self, activites, weight):
-        num_activites = random.choices(range(1, len(activites) + 1), weight)[0]
-        random_activites = random.sample(activites, k=num_activites)
-        random_activities_with_commas = ", ".join(random_activites)
+        num_activities = random.choices(range(1, len(activites) + 1), weights=weight)[0]
+        random_activities = random.sample(activites[1:], k=num_activities - 1)  # Exclude the first activity
+        random_activities.insert(0, activites[0])  # Insert the first activity at the beginning
+        random_activities_with_commas = ", ".join(random_activities)
         return random_activities_with_commas
 
     def fill_work_report(self, cell_index, row_index, cell, row, table):
-        activities = ["Kunden Beraten", "Ware verräumt", "Fahrräder Sortiert"]
-        weights = [5, 3, 2]
+        activities = ["Kunden Beraten", "Ware verräumt", "Fahrräder Sortiert", "Fahrrad übergeben"]
+        weights = [10, 3, 2, 3]
 
         random_activites = self.created_random_activites_with_weights(activities, weights)
         print(random_activites)
@@ -348,6 +349,8 @@ class MainWindow():
         activitie_cell.text = random_activites
         time_cell = row.cells[time_index]
         time_cell.text = "9:50-15:00"
+
+        random_activites = self.created_random_activites_with_weights(activities, weights)
 
         second_row = table.rows[second_row_index]
         activitie_cell = second_row.cells[activitie_index]
